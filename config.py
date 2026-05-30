@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 
 class Config:
     def __init__(self, config_file: Path):
-        self._config = None
-        if config_file.is_file():
-            with open(config_file, "rb") as f:
-                self._config = Box(tomllib.load(f))
+        if not config_file.is_file():
+            raise FileNotFoundError(f"Config file not found: {config_file}")
+        with open(config_file, "rb") as f:
+            self._config = Box(tomllib.load(f))
 
     @property
     def model(self):

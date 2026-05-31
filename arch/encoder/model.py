@@ -84,13 +84,13 @@ class Encoder(nn.Module):
         for layer_id, enc_layer in enumerate(self.encoder_layers, start=1):
             out = enc_layer(out, pad_mask)
         return out
-    
+
     def _init_layers(self, initializer: Callable, init_bias: bool):
-        if hasattr(self.embeddings, '_init_layer'):
+        if hasattr(self.embeddings, "_init_layer"):
             self.embeddings._init_layer()
-        
+
         for encoder_layer in self.encoder_layers:
-            if hasattr(encoder_layer, '_init_layer'):
+            if hasattr(encoder_layer, "_init_layer"):
                 encoder_layer._init_layer(initializer, init_bias)
 
 

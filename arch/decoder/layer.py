@@ -93,14 +93,13 @@ class DecoderLayer(nn.Module):
         res_norm_ca = self.residual_add_norm_ca(res_norm_ma, cross_attn_output)
         ff_output = self.feed_forward(res_norm_ca)
         return self.residual_add_norm_ff(res_norm_ca, ff_output)
-    
+
     def _init_layer(self, initializer: Callable, init_bias: bool):
         if hasattr(self.masked_multi_head_attn, "_init_layer"):
             self.masked_multi_head_attn._init_layer(initializer, init_bias)
 
         if hasattr(self.cross_multi_head_attn, "_init_layer"):
             self.cross_multi_head_attn._init_layer(initializer, init_bias)
-        
+
         if hasattr(self.feed_forward, "_init_layer"):
             self.feed_forward._init_layer(initializer, init_bias)
-        

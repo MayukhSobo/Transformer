@@ -10,17 +10,8 @@ class LogColors:
 
 class ColoredFormatter(logging.Formatter):
     """
-    Custom logging formatter for adding color to log messages.
-
-    This class provides functionality to format log records with color codes
-    based on the severity level (INFO, WARNING, ERROR). Each log level is
-    assigned a specific color, making log outputs more readable and
-    aesthetically pleasing.
-
-    :ivar default_format: The default format string used by the formatter.
-    :type default_format: str
-    :ivar color_map: A dictionary mapping log levels to their respective color codes.
-    :type color_map: dict
+    Injects ANSI color codes into log records
+    based on severity (INFO, WARNING, ERROR).
     """
 
     def format(self, record: logging.LogRecord) -> str:
@@ -36,18 +27,16 @@ class ColoredFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logging(for_notebook: bool = False, level: int = logging.INFO) -> None:
+def setup_log_formatting(for_notebook: bool = False, level: int = logging.INFO) -> None:
     """
-    Sets up the logging configuration for an application.
+    Configures the root logger's handler and formatter.
 
-    This function configures the root logger by removing existing handlers, setting
-    the log level, and adding a new stream handler with an appropriate formatter.
-    The formatter can be adjusted for notebook environments.
+    Clears any existing handlers to prevent duplicate output, then attaches a
+    StreamHandler with a colored formatter (plain text in notebook environments).
 
-    :param for_notebook: A flag indicating if the logging setup is for a notebook
-        environment (True) or not (False).
-    :param level: The logging level to be set for the root logger (e.g.,
-        logging.INFO, logging.DEBUG).
+    :param for_notebook: Use a plain formatter without ANSI color codes (True for
+        Jupyter notebooks, False for terminal output).
+    :param level: Minimum log level for the root logger. Defaults to logging.INFO.
     :return: None
     """
     root_logger = logging.getLogger()

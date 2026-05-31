@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from typing import Callable
 
+
 class FeedForward(nn.Module):
     """
     Position-wise feed-forward network used in transformer architectures.

@@ -21,8 +21,9 @@ Educational implementation of the Transformer architecture from the ["Attention 
 git clone https://github.com/MayukhSobo/Transformer.git
 cd Transformer
 
-# Using uv (recommended)
-uv sync
+# Using conda (recommended)
+conda env create -f environment.yml
+conda activate transformer
 
 # Or using pip
 pip install -r requirements.txt
@@ -127,6 +128,9 @@ path = "./data"
 ## 🔧 Development
 
 ```bash
+# Install git hooks (required — enforces formatting before every commit)
+pre-commit install
+
 # Run tests
 python test_runner.py
 
@@ -138,6 +142,9 @@ pylint $(git ls-files '*.py')
 
 # Format code
 black .
+
+# Update conda environment after changes to environment.yml
+conda env update -f environment.yml --prune
 ```
 
 ## 📚 References

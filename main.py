@@ -1,7 +1,7 @@
 import click
 from pathlib import Path
 import logging
-from log_config import setup_logging
+from log_config import setup_log_formatting
 from run import run_train
 
 
@@ -9,25 +9,24 @@ from run import run_train
 @click.option(
     "--config",
     type=click.Path(exists=True, path_type=Path),
-    default="config.toml",
+    required=True,
     help="Path to the configuration file",
 )
-def main(config: Path):
+@click.option(
+    "--notebook",
+    is_flag=True,
+    default=False,
+    help="Use raw text logging for Jupyter notebooks",
+)
+def main(config: Path, notebook: bool):
     """
     Main entry point for transformer training with configurable parameters.
 
-    This function sets up logging, validates the configuration file, and initiates
-    the transformer training process with the specified configuration.
-
     Args:
-        config (Path): Path to the TOML configuration file containing model,
-            training, tokenizer, and experiment parameters.
-
-    Note:
-        This function is decorated with Click to provide a command-line interface.
-        It accepts a --config option that defaults to 'config.toml'.
+        config (Path): Path to the TOML configuration file.
+        notebook (bool): If set, uses raw text logging suitable for Jupyter.
     """
-    setup_logging(for_notebook=False)
+    setup_log_formatting(for_notebook=notebook)
     logging.info(f"Running transformer with config {config}")
     run_train(config_file=config)
 

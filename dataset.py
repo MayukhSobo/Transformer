@@ -1,14 +1,12 @@
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator, Tuple
-from typing import Union
+from typing import Any, Iterable, Iterator, Tuple
 
 import torch
 from codetiming import Timer
 from datasets import load_dataset
 from datasets.arrow_dataset import Dataset as HFDataset
-from sentencepiece import SentencePieceProcessor
 from torch.utils.data import IterableDataset
 
 from tokenizer.sentencepiece import SentencePieceTokenizer
@@ -67,7 +65,7 @@ class TransformerDataset(IterableDataset):  # pylint: disable=abstract-method
 
     Args:
         dataset (Dataset): Underlying dataset containing text samples with translations.
-        tokenizer (Union[SentencePieceProcessor, WordTokenizer]): Tokenizer used to
+        tokenizer (Union[SentencePieceTokenizer, WordTokenizer]): Tokenizer used to
             process input and target texts.
         max_seq_len (int): Maximum allowed sequence length for tokenized data.
 
@@ -79,15 +77,18 @@ class TransformerDataset(IterableDataset):  # pylint: disable=abstract-method
     def __init__(
         self,
         dataset: HFDataset,
-        tokenizer: Union[SentencePieceProcessor, WordTokenizer],
+        tokenizer: SentencePieceTokenizer | WordTokenizer,
         max_seq_len: int,
     ):
-        self.tokenizer: Union[SentencePieceProcessor, WordTokenizer] = tokenizer
+        self.tokenizer: SentencePieceTokenizer | WordTokenizer = tokenizer
         self.max_seq_len = max_seq_len
-        self.dataset = dataset
+        self.dataset: Iterable[dict[str, Any]] = dataset  # type: ignore[assignment]
 
         # Get language keys
         first_sample = next(iter(dataset))
+        assert isinstance(
+            first_sample, dict
+        ), f"Expected a dict sample from dataset, got {type(first_sample).__name__}"
         lang_keys = list(first_sample["translation"].keys())
         self.tokenizer.train(dataset, lang_keys)
 
@@ -98,10 +99,10 @@ class TransformerDataset(IterableDataset):  # pylint: disable=abstract-method
 
             src_tokens, tgt_tokens = self.tokenizer.encode(src_text, tgt_text)
             if src_tokens and tgt_tokens:
-                yield src_tokens, tgt_tokens
+                yield torch.tensor(src_tokens), torch.tensor(tgt_tokens)
 
 
 @dataclass
 class Dataset:
     dataset: TransformerDataset
-    tokenizer: Union[SentencePieceTokenizer, WordTokenizer]
+    tokenizer: SentencePieceTokenizer | WordTokenizer

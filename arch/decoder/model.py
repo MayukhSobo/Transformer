@@ -39,10 +39,10 @@ class Decoder(nn.Module):
         d_k: int,
     ):
         super().__init__()
-        self.embeddings = Embeddings(
-            vocab_size=vocab_size, hidden_size=hidden_size
+        self.embeddings = Embeddings(vocab_size=vocab_size, hidden_size=hidden_size)
+        self.target_position_encoding = PositionalEncoding(
+            seq_len, hidden_size, dropout_pe
         )
-        self.target_position_encoding = PositionalEncoding(seq_len, hidden_size, dropout_pe)
         self.decoder_layers: Iterator[DecoderLayer] = nn.ModuleList(
             [
                 DecoderLayer(
@@ -65,14 +65,15 @@ class Decoder(nn.Module):
         for dec_layer in self.decoder_layers:
             out = dec_layer(out, pad_mask, encoder_output)
         return out
-    
+
     def _init_layers(self, intializer: Callable, init_bias: bool):
         if hasattr(self.embeddings, "_init_layer"):
             self.embeddings._init_layer()
-        
+
         for decoder_layer in self.decoder_layers:
             if hasattr(decoder_layer, "_init_layer"):
                 decoder_layer._init_layer(intializer, init_bias)
+
 
 def get_decoder(conf: Config) -> Decoder:
     """

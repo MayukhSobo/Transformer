@@ -92,7 +92,9 @@ class TransformerModel:
                 return torch.nn.init.kaiming_uniform_
             case "kaiming_normal":
                 return torch.nn.init.kaiming_normal_
-        logger.warning(f"Unknown init method {init_method}, defaulting to xavier_uniform")
+        logger.warning(
+            f"Unknown init method {init_method}, defaulting to xavier_uniform"
+        )
         return torch.nn.init.xavier_uniform_
 
     def initialize_weights_(self, init_method: str, init_bias: bool):
@@ -105,6 +107,7 @@ class TransformerModel:
         self.decoder._init_layers(initializer, init_bias)
 
         logger.debug(f"📝 Initialized embedding layers")
+
 
 def init_dataset(tokenizer, config: Config):
     """
@@ -131,8 +134,8 @@ def init_dataset(tokenizer, config: Config):
 
     # // TODO: Cater for test and validation datasets
     # Use streaming=True to avoid loading entire dataset into memory
-    train, _, _ = get_dataset(dataset_path, validation=False, streaming=True)
-    train_ds = TransformerDataset(train, tokenizer, config.model.max_seq_len)
+    train_split, _, _ = get_dataset(dataset_path, validation=False, streaming=True)
+    train_ds = TransformerDataset(train_split, tokenizer, config.model.max_seq_len)
     return train_ds
 
 

@@ -125,64 +125,36 @@ def get_dataloader(ds: Dataset, config: Config):
 
 def get_device(config: Config) -> torch.device:
     """
-    Determines the appropriate PyTorch device for model training and inference.
-    This function analyzes the configuration settings and system capabilities to select
-    the optimal device. It supports automatic device selection, explicit CUDA/CPU
-    configuration, and provides detailed logging about device selection and capabilities.
-    Args:
-        config (Config): Configuration object containing training parameters. Expected
-                        to have a 'training.device' attribute with values: 'auto',
-                        'cuda', or 'cpu'.
-    Returns:
-        torch.device: Configured PyTorch device object ready for tensor operations.
-    Raises:
-        ValueError: If an invalid device preference is specified in the configuration.
-                   Valid options are 'auto', 'cuda', or 'cpu'.
-    Device Selection Logic:
-        - 'auto': Automatically selects CUDA if available, otherwise falls back to CPU
-        - 'cuda': Forces CUDA usage if available, warns and falls back to CPU if not
-        - 'cpu': Explicitly uses CPU regardless of GPU availability
-    Note:
-        The function logs detailed information about the selected device, including
-        GPU model name and memory capacity when CUDA is selected.
-    Example:
-        >>> config = Config()
-        >>> config.training.device = 'auto'
-        >>> device = get_device(config)
-        >>> print(device)
-        device(type='cuda', index=0)
-    """
-    device_preference = getattr(config.training, "device", "auto").lower()
+    Determines the appropriate PyTorch device based on configuration and availability.
 
-    if device_preference == "auto":
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
-            logger.info(f"Auto-selected CUDA device: {torch.cuda.get_device_name(0)}")
-            logger.info(
-                f"CUDA memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB"
-            )
-        else:
-            device = torch.device("cpu")
-            logger.info("No GPU acceleration available, auto-selected CPU")
-    elif device_preference == "cuda":
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
-            logger.info(
-                f"Using configured CUDA device: {torch.cuda.get_device_name(0)}"
-            )
-            logger.info(
-                f"CUDA memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB"
-            )
-        else:
-            logger.warning("CUDA requested but not available, falling back to CPU")
-            device = torch.device("cpu")
-    elif device_preference == "cpu":
-        device = torch.device("cpu")
-        logger.info("Using configured CPU device")
-    else:
-        logger.warning(f"Unknown device preference '{device_preference}'")
+    Args:
+        config (Config): Configuration object with a 'training.device' attribute.
+                        Valid values: 'auto', 'cuda', 'cpu'.
+
+    Returns:
+        torch.device: Selected device ready for tensor operations.
+
+    Raises:
+        ValueError: If an invalid device value is specified in the configuration.
+    """
+    preference = getattr(config.training, "device", "auto").lower()
+
+    if preference not in ("auto", "cuda", "cpu"):
         raise ValueError(
-            f"Invalid device configuration: '{device_preference}'. Must be 'auto', 'cuda', or 'cpu'"
+            f"Invalid device: '{preference}'. Must be 'auto', 'cuda', or 'cpu'"
         )
 
-    return device
+    if preference == "cuda" and not torch.cuda.is_available():
+        logger.warning("CUDA requested but not available, falling back to CPU")
+
+    use_cuda = torch.cuda.is_available() and preference != "cpu"
+
+    if use_cuda:
+        logger.info(
+            f"Using CUDA: {torch.cuda.get_device_name(0)} "
+            f"({torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB)"
+        )
+        return torch.device("cuda")
+
+    logger.info("Using CPU")
+    return torch.device("cpu")

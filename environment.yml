@@ -1,0 +1,23 @@
+name: transformer
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+    - click~=8.2.1
+    - python-box~=7.3.2
+    - datasets~=4.0.0
+    - codetiming~=1.4.0
+    - torch~=2.8.0
+    - dill~=0.3.8
+    - humanize~=4.12.3
+    - tqdm~=4.67.1
+    - sentencepiece~=0.2.1
+    - protobuf~=6.32.0
+    - wandb~=0.21.1
+    - psutil~=5.9.0
+    - black~=25.1.0
+    - pre-commit~=4.2.0

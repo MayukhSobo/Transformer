@@ -121,14 +121,14 @@ class MultiHeadAttention(nn.Module):
 
         # Apply the dropout
         return self.out_dropout(projected_output)
-    
+
     def _init_layer(self, initializer: Callable, init_bias: bool):
         for i, head in enumerate(self.attention_heads):
-            if hasattr(head, '_init_layer'):
+            if hasattr(head, "_init_layer"):
                 head._init_layer(initializer, init_bias)
             else:
                 raise NotImplementedError(f"Head {i} does not have _init_layer method")
-            
+
         initializer(self.W_o.weight)
         if init_bias:
             nn.init.zeros_(self.W_o.bias)

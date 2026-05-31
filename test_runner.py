@@ -246,7 +246,9 @@ def run_standalone_test():
     try:
         # Add the current directory to Python path
         sys.path.insert(0, str(Path(__file__).parent))
-        from tests.test_transformer import standalone_test_run # pylint: disable=import-outside-toplevel
+        from tests.test_transformer import (
+            standalone_test_run,
+        )  # pylint: disable=import-outside-toplevel
 
         config_file = Path("config.toml")
         if not config_file.exists():
@@ -275,7 +277,8 @@ def run_standalone_test():
 def show_help():
     """Show help message."""
     print_banner("🔥 TRANSFORMER TEST RUNNER 🔥")
-    print("""
+    print(
+        """
 Available test options:
 
 📋 unittest       - Run tests with Python's built-in unittest
@@ -293,7 +296,8 @@ Examples:
     python test_runner.py parallel
     python test_runner.py benchmark
     python test_runner.py standalone
-    """)
+    """
+    )
 
 
 def main():
@@ -320,7 +324,9 @@ def main():
         if test_type == "standalone":
             return run_standalone_test()
         print(f"❌ Unknown test type: {test_type}")
-        print("💡 Available options: unittest, pytest, coverage, parallel, benchmark, standalone, help")
+        print(
+            "💡 Available options: unittest, pytest, coverage, parallel, benchmark, standalone, help"
+        )
         return 1
     # Default to pytest if no argument provided
     return run_pytest()

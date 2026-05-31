@@ -37,6 +37,10 @@ test = [
     "colorama>=0.4.6",
 ]
 
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+
 [tool.setuptools]
 packages = ["transformer"]
 

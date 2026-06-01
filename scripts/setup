@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v uv &>/dev/null; then
+    echo "uv not found. Install it from https://docs.astral.sh/uv/getting-started/installation/"
+    exit 1
+fi
+
+echo "Installing dependencies..."
+uv sync --all-extras
+
+echo "Installing git hooks..."
+uv run pre-commit install --install-hooks
+
+echo "Done. Run scripts/run-sanity-check to verify the setup."

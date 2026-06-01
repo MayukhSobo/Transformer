@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+exit_code=0
+
+run_check() {
+    local name="$1"
+    shift
+    echo "[$name]"
+    "$@"
+    local code=$?
+    if [ $code -ne 0 ]; then
+        echo "FAILED: $name"
+        exit_code=1
+    fi
+    echo ""
+}
+
+run_check "ruff lint"   uv run ruff check .
+run_check "ruff format" uv run ruff format --check .
+run_check "ty"          uv run ty check --python .venv .
+
+if [ $exit_code -ne 0 ]; then
+    echo "One or more checks failed."
+else
+    echo "All checks passed."
+fi
+
+exit $exit_code

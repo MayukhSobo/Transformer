@@ -20,6 +20,7 @@ dependencies = [
 dev = [
     "ipython>=9.4.0",
     "jupyter",
+    "ruff>=0.15.0",
     "ty>=0.0.41",
 ]
 test = [

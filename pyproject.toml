@@ -2,7 +2,7 @@
 name = "Transformer"
 version = "0.1.0"
 description = "Implementation of Transformer in Scratch"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "tqdm",
     'torch',
@@ -10,7 +10,6 @@ dependencies = [
     'pydantic>=2.0',
     'click',
     'codetiming',
-    "jupyter>=1.1.1",
     "sentencepiece",
     "psutil",
     "humanize",
@@ -38,6 +37,7 @@ test = [
 [tool.ruff]
 line-length = 88
 target-version = "py313"
+exclude = ["notebooks/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "PL", "B", "UP", "C4", "SIM", "RUF", "PERF"]

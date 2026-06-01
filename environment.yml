@@ -1,8 +1,0 @@
-name: transformer
-channels:
-  - conda-forge
-  - pytorch
-  - defaults
-dependencies:
-  - python=3.12
-  - uv

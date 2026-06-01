@@ -1,4 +1,5 @@
 .venv
+.conda/
 .DS_Store
 __pycache__/
 arch/__pycache__/
@@ -16,7 +17,6 @@ data/*
 *.html
 wandb/
 .ipynb_checkpoints/
-.conda/
 .idea/
 .ruff_cache/
 .claude/

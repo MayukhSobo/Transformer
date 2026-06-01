@@ -1,7 +1,7 @@
 
 # Transformer: Attention Is All You Need
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/release/python-3120/)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/release/python-3130/)
 
 Educational implementation of the Transformer architecture from the ["Attention Is All You Need"](https://arxiv.org/pdf/1706.03762) paper, built with PyTorch.
 
@@ -16,14 +16,11 @@ Educational implementation of the Transformer architecture from the ["Attention 
 
 ## Setup
 
-Prerequisites: [conda](https://docs.conda.io/en/latest/miniconda.html) and [uv](https://docs.astral.sh/uv/getting-started/installation/).
+Prerequisites: [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```bash
 git clone https://github.com/MayukhSobo/Transformer.git
 cd Transformer
-
-conda env create -f environment.yml
-conda activate transformer
 uv sync
 ```
 
@@ -144,6 +141,9 @@ ruff format .
 
 # Update dependencies after changes to pyproject.toml
 uv sync
+
+# Recreate the venv from scratch
+rm -rf ./.venv && uv sync
 ```
 
 ## 📚 References

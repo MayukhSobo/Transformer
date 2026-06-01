@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# ── usage ─────────────────────────────────────────────────────────────────────
+
+usage() {
+    printf 'Usage: %s [run|dev]\n\n' "$0"
+    printf '  run   core only  (train, infer, use the model)\n'
+    printf '  dev   everything (dev tools + test suite, installs git hooks)\n\n'
+    printf 'Omit the argument for an interactive prompt.\n'
+    exit 1
+}
+
+for arg in "$@"; do
+    case "$arg" in
+        -h|--help) usage ;;
+        run|dev) ;;
+        *) printf 'Unknown option: %s\n' "$arg" >&2; usage ;;
+    esac
+done
+
 # ── ensure gum ───────────────────────────────────────────────────────────────
 
 # shellcheck source=ensure-gum
@@ -26,25 +44,25 @@ gum style \
 
 # ── mode selection ────────────────────────────────────────────────────────────
 
-CHOICE=$(gum choose \
-    --header "Select setup mode:" \
-    --header.foreground 245 \
-    --cursor.foreground 99 \
-    --item.foreground 255 \
-    --selected.foreground 99 \
-    --selected.bold \
-    "run   — core only         (train, infer, use the model)" \
-    "dev   — core + dev tools  (jupyter, ruff, ty, ipython)" \
-    "test  — core + test suite (pytest, coverage, benchmarks)" \
-    "all   — everything        (core + dev + test)")
+if [ $# -eq 1 ]; then
+    CHOICE="$1"
+else
+    CHOICE=$(gum choose \
+        --header "Select setup mode:" \
+        --header.foreground 245 \
+        --cursor.foreground 99 \
+        --item.foreground 255 \
+        --selected.foreground 99 \
+        --selected.bold \
+        "run   — core only  (train, infer, use the model)" \
+        "dev   — everything (dev tools + test suite, installs git hooks)")
+fi
 
 # ── resolve args ──────────────────────────────────────────────────────────────
 
 case "${CHOICE%% *}" in
-    run)  SYNC_ARGS=();                   INSTALL_HOOKS=false ;;
-    dev)  SYNC_ARGS=(--extra dev);        INSTALL_HOOKS=true  ;;
-    test) SYNC_ARGS=(--extra test);       INSTALL_HOOKS=false ;;
-    all)  SYNC_ARGS=(--all-extras);       INSTALL_HOOKS=true  ;;
+    run) SYNC_ARGS=();              INSTALL_HOOKS=false ;;
+    dev) SYNC_ARGS=(--all-extras);  INSTALL_HOOKS=true  ;;
 esac
 
 echo ""

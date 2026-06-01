@@ -13,8 +13,47 @@ Prerequisites: [uv](https://docs.astral.sh/uv/getting-started/installation/).
 ```bash
 git clone https://github.com/MayukhSobo/Transformer.git
 cd Transformer
-uv sync
-pre-commit install
+```
+
+Run the setup script — interactively or by passing a mode directly:
+
+| Mode | What it installs | Git hooks |
+|------|-----------------|-----------|
+| `run` | Core runtime only | No |
+| `dev` | Core + dev tools + test suite | Yes |
+
+```bash
+./scripts/setup          # interactive TUI picker
+./scripts/setup run      # non-interactive
+./scripts/setup dev      # non-interactive
+```
+
+## Usage
+
+### Training
+
+```bash
+python main.py --config config.toml
+```
+
+### Testing
+
+> Requires `dev` mode.
+
+```bash
+python test_runner.py              # pytest (default)
+python test_runner.py coverage     # pytest + coverage report → reports/
+python test_runner.py parallel     # pytest-xdist (all CPUs)
+python test_runner.py benchmark    # benchmark tests only
+python test_runner.py unittest     # stdlib unittest
+```
+
+### Code quality
+
+> Requires `dev` mode.
+
+```bash
+./scripts/run-sanity-check         # lint + format + type check
 ```
 
 ## Project Structure
@@ -31,7 +70,8 @@ Transformer/
 │   └── residual_add_norm.py
 ├── tokenizer/              # SentencePiece and word-level tokenizers
 ├── tests/
-├── config.toml             # Model configuration
+├── scripts/                # setup, run-sanity-check
+├── config.toml
 ├── model.py
 ├── train.py
 ├── dataset.py
@@ -57,15 +97,6 @@ algorithm = "bpe"         # or "unigram"
 batch_size = 32
 epochs = 10
 learning_rate = 0.0005
-```
-
-## Development
-
-```bash
-./scripts/run-sanity-check   # lint + format + type check
-python main.py               # train with default config
-python test_runner.py        # run tests
-uv sync                      # update dependencies
 ```
 
 ## References

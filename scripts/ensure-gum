@@ -4,7 +4,7 @@
 
 if command -v gum &>/dev/null; then return 0; fi
 
-local os arch version bin_dir="$HOME/.local/bin"
+os="" arch="" version="" bin_dir="$HOME/.local/bin"
 
 case "$(uname -s)" in
     Darwin) os="Darwin" ;;

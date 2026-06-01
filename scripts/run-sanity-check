@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-# shellcheck source=ensure-gum
-source "$(dirname "${BASH_SOURCE[0]}")/ensure-gum"
-
 silent=false
 for arg in "$@"; do
     case "$arg" in
@@ -14,6 +11,9 @@ done
 
 if $silent; then
     export NO_COLOR=1
+else
+    # shellcheck source=ensure-gum
+    source "$(dirname "${BASH_SOURCE[0]}")/ensure-gum"
 fi
 
 declare -a check_names=()

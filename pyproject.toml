@@ -20,6 +20,7 @@ dependencies = [
 dev = [
     "ipython>=9.4.0",
     "jupyter",
+    "ty>=0.0.41",
 ]
 test = [
     "pytest>=7.0.0",

@@ -2,10 +2,12 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.15
     hooks:
-      - id: ruff
+      - id: ruff-check
+        name: ruff lint
         stages: [pre-commit]
         args: [--exit-non-zero-on-fix]
       - id: ruff-format
+        name: ruff format
         stages: [pre-commit]
 
   - repo: local
@@ -22,5 +24,12 @@ repos:
         stages: [pre-push]
         language: system
         entry: ruff format --check .
+        pass_filenames: false
+        always_run: true
+      - id: ty
+        name: ty (type check)
+        stages: [pre-commit, pre-push]
+        language: system
+        entry: ty check --python .venv .
         pass_filenames: false
         always_run: true

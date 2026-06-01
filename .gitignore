@@ -12,7 +12,7 @@ models/*
 data/*
 !data/.gitkeep
 
-.vscode/
+.vscode/*.log
 .coverage
 *.html
 wandb/

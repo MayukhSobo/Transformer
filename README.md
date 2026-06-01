@@ -14,7 +14,9 @@ Educational implementation of the Transformer architecture from the ["Attention 
 - **Educational Focus** - well-documented code with comprehensive docstrings
 - **Production Ready** - proper error handling, logging, and testing
 
-## 🛠️ Installation
+## Setup
+
+Prerequisites: [conda](https://docs.conda.io/en/latest/miniconda.html) and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```bash
 git clone https://github.com/MayukhSobo/Transformer.git

@@ -101,12 +101,12 @@ class MultiHeadAttention(nn.Module):
 
         if self.IsSelfAttention:
             # Pass the inputs with all the attn heads
-            for head in self.attention_heads:
-                head_outputs.append(head(x, pad_mask))  # Self-Attention head
+            head_outputs.extend(head(x, pad_mask) for head in self.attention_heads)
         else:
             # For Cross Attention, we give both input and encoder output
-            for head in self.attention_heads:
-                head_outputs.append(head(x, encoder_output))  # Cross-Attention head
+            head_outputs.extend(
+                head(x, encoder_output) for head in self.attention_heads
+            )
 
         # Concat all the head's output horizontally
         # dim = -1 indicate the last dimension wise which is hidden_size

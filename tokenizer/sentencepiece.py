@@ -1,7 +1,8 @@
 import logging
-import sentencepiece as spm
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
+import sentencepiece as spm
 from codetiming import Timer
 from datasets.arrow_dataset import Dataset
 
@@ -64,15 +65,15 @@ class SentencePieceTokenizer:
 
         if not self.model_path.with_suffix(".model").exists():
             all_samples = []
-            sample_count = 0
 
             # Handle both streaming and regular datasets
-            for sample in dataset:
-                if sample_count >= self.sample_size:
+            for sample_count, sample in enumerate(dataset, start=1):
+                if sample_count > self.sample_size:
                     break
-                for lang_key in lang_keys:
-                    all_samples.append(sample["translation"][lang_key])  # type: ignore[index]
-                sample_count += 1
+                all_samples.extend(
+                    sample["translation"][lang_key]  # type: ignore[index]
+                    for lang_key in lang_keys
+                )
 
                 if sample_count % 10000 == 0:
                     logger.info(

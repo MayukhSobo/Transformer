@@ -56,14 +56,14 @@ def collate_fn(batch, pad_id: int, bos_id: int, eos_id: int, max_seq_len: int):
 
     for i, (src_tkn, tgt_tkn) in enumerate(batch):
         # For encoder input: SRC_TOKENS + EOS + [PAD]
-        src_X = src_tkn[: max_seq_len - 1] + [eos_id]
+        src_X = [*src_tkn[: max_seq_len - 1], eos_id]
 
         # For decoder input: BOS + TGT_TOKENS + [PAD]
         d_tkn = tgt_tkn[: max_seq_len - 1]
-        tgt_X = [bos_id] + d_tkn
+        tgt_X = [bos_id, *d_tkn]
 
         # For decoder target: TGT_TOKENS + EOS + [PAD]
-        tgt_y = d_tkn + [eos_id]
+        tgt_y = [*d_tkn, eos_id]
 
         # Pad sequences
         src_X = src_X + [pad_id] * (max_seq_len - len(src_X))

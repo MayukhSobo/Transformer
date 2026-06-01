@@ -3,6 +3,24 @@ repos:
     rev: v0.15.15
     hooks:
       - id: ruff
-        stages: [pre-commit, pre-push]
+        stages: [pre-commit]
         args: [--exit-non-zero-on-fix]
       - id: ruff-format
+        stages: [pre-commit]
+
+  - repo: local
+    hooks:
+      - id: ruff-check-all
+        name: ruff check (all files)
+        stages: [pre-push]
+        language: system
+        entry: ruff check .
+        pass_filenames: false
+        always_run: true
+      - id: ruff-format-check-all
+        name: ruff format --check (all files)
+        stages: [pre-push]
+        language: system
+        entry: ruff format --check .
+        pass_filenames: false
+        always_run: true

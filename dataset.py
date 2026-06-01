@@ -91,9 +91,9 @@ class TransformerDataset(IterableDataset):  # pylint: disable=abstract-method
 
         # Get language keys
         first_sample = next(iter(dataset))
-        assert isinstance(
-            first_sample, dict
-        ), f"Expected a dict sample from dataset, got {type(first_sample).__name__}"
+        assert isinstance(first_sample, dict), (
+            f"Expected a dict sample from dataset, got {type(first_sample).__name__}"
+        )
         lang_keys = list(first_sample["translation"].keys())
         self.tokenizer.train(dataset, lang_keys)
 

@@ -83,7 +83,7 @@ class Encoder(nn.Module):
         """
         inp_embd = self.embeddings(x)
         out = self.positional_encoder(inp_embd)
-        for layer_id, enc_layer in enumerate(self.encoder_layers, start=1):
+        for enc_layer in self.encoder_layers:
             out = enc_layer(out, pad_mask)
         return out
 

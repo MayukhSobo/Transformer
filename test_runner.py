@@ -246,9 +246,9 @@ def run_standalone_test():
     try:
         # Add the current directory to Python path
         sys.path.insert(0, str(Path(__file__).parent))
-        from tests.test_transformer import (
+        from tests.test_transformer import (  # noqa: PLC0415
             standalone_test_run,
-        )  # pylint: disable=import-outside-toplevel
+        )
 
         config_file = Path("config.toml")
         if not config_file.exists():

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class WordTokenizer:
-    def __init__(self, vocab_size: int, unknown_token: str = None):
+    def __init__(self, vocab_size: int, unknown_token: str | None = None):
         if not unknown_token:
             unknown_token = "<UNK>"
         self.unknown_token = unknown_token
@@ -56,5 +56,5 @@ class WordTokenizer:
     def n_vocab(self):
         return self._n_vocab
 
-    def train(self, dataset: Dataset, lang_keys: list = None):
+    def train(self, dataset: Dataset, lang_keys: list | None = None):
         pass

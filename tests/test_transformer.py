@@ -158,7 +158,6 @@ def standalone_test_run(config_file: Path):
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-
             # Load config
             task = progress.add_task("Loading configuration...", total=None)
             config = Config(config_file=config_file)

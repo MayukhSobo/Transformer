@@ -45,7 +45,7 @@ class TestTransformerModel:
         """Fixture for configuration file."""
         config_path = Path("config.toml")
         if not config_path.exists():
-            pytest.skip(f"Configuration file {config_path} not found")  # type: ignore
+            pytest.skip(f"Configuration file {config_path} not found")  # ty: ignore[too-many-positional-arguments]
         return config_path
 
     @pytest.fixture(scope="class")

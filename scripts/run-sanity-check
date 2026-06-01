@@ -75,7 +75,7 @@ run_check "format"     bash -c '
     fi
     exit $code
 '
-run_check "type check" uv run ty check --python .venv --exclude notebooks/ .
+run_check "type check" uv run ty check --python .venv --exclude notebooks/ --error-on-warning .
 
 # ── results ───────────────────────────────────────────────────────────────────
 exit_code=0

@@ -2,6 +2,7 @@
 # Transformer: Attention Is All You Need
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/release/python-3130/)
+[![Code Quality](https://github.com/MayukhSobo/Transformer/actions/workflows/code-quality.yml/badge.svg)](https://github.com/MayukhSobo/Transformer/actions/workflows/code-quality.yml)
 
 Educational implementation of the Transformer architecture from the ["Attention Is All You Need"](https://arxiv.org/pdf/1706.03762) paper, built with PyTorch.
 

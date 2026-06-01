@@ -7,7 +7,6 @@ dependencies = [
     "tqdm",
     'torch',
     'datasets',
-    'tiktoken',
     'pydantic>=2.0',
     'click',
     'codetiming',
@@ -16,7 +15,6 @@ dependencies = [
     "psutil",
     "humanize",
     "wandb",
-    "black>=25.1.0",
 ]
 
 [project.optional-dependencies]
@@ -36,10 +34,6 @@ test = [
     "rich>=13.0.0",
     "colorama>=0.4.6",
 ]
-
-[tool.black]
-line-length = 88
-target-version = ["py313"]
 
 [tool.ruff]
 line-length = 88

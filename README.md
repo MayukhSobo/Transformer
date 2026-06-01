@@ -1,8 +1,7 @@
 
 # Transformer: Attention Is All You Need
 
-[![Pylint](https://github.com/MayukhSobo/Transformer/actions/workflows/pylint.yml/badge.svg?branch=main&event=push)](https://github.com/MayukhSobo/Transformer/actions/workflows/pylint.yml)
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 
 Educational implementation of the Transformer architecture from the ["Attention Is All You Need"](https://arxiv.org/pdf/1706.03762) paper, built with PyTorch.
 
@@ -21,12 +20,9 @@ Educational implementation of the Transformer architecture from the ["Attention 
 git clone https://github.com/MayukhSobo/Transformer.git
 cd Transformer
 
-# Using conda (recommended)
 conda env create -f environment.yml
 conda activate transformer
-
-# Or using pip
-pip install -r requirements.txt
+uv sync
 ```
 
 ## 📖 Usage
@@ -34,10 +30,11 @@ pip install -r requirements.txt
 ### Basic Model Creation
 
 ```python
+from pathlib import Path
 from model import build_transformer
 from config import Config
 
-config = Config(config_file="config.toml")
+config = Config(config_file=Path("config.toml"))
 transformer, dataset = build_transformer(config)
 
 # Forward pass
@@ -137,14 +134,14 @@ python test_runner.py
 # Run with coverage
 python test_runner.py coverage
 
-# Check code quality
-pylint $(git ls-files '*.py')
+# Lint code
+ruff check .
 
 # Format code
-black .
+ruff format .
 
-# Update conda environment after changes to environment.yml
-conda env update -f environment.yml --prune
+# Update dependencies after changes to pyproject.toml
+uv sync
 ```
 
 ## 📚 References

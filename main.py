@@ -1,6 +1,8 @@
-import click
-from pathlib import Path
 import logging
+from pathlib import Path
+
+import click
+
 from log_config import setup_log_formatting
 from run import run_train
 

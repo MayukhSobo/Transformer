@@ -1,10 +1,12 @@
-import torch.nn as nn
+from collections.abc import Callable
+
 import torch
-from typing import Union, Callable
+from torch import nn
+
 from arch.attentions.multihead import MultiHeadAttention
-from arch.residual_add_norm import ResidualAddNorm
-from arch.feed_forward import FeedForward
 from arch.attentions.self import SelfAttention
+from arch.feed_forward import FeedForward
+from arch.residual_add_norm import ResidualAddNorm
 
 
 class EncoderLayer(nn.Module):
@@ -47,7 +49,7 @@ class EncoderLayer(nn.Module):
         dropout_pe: float,
         n_heads: int,
         ff_hidden_size: int,
-        d_k: Union[int, None] = None,
+        d_k: int | None = None,
     ):
         """
         Initializes the encoder layer with a multi-head attention mechanism, residual connections,

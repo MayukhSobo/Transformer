@@ -8,7 +8,7 @@ dependencies = [
     'torch',
     'datasets',
     'tiktoken',
-    'python-box',
+    'pydantic>=2.0',
     'click',
     'codetiming',
     "jupyter>=1.1.1",
@@ -40,6 +40,31 @@ test = [
 [tool.black]
 line-length = 88
 target-version = ["py313"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "PL", "B", "UP", "C4", "SIM", "RUF", "PERF"]
+ignore = [
+    "E501",    # line-too-long (black enforces line length)
+    "PLR0913", # too-many-arguments
+    "PLR0917", # too-many-positional-arguments
+    "PLR0911", # too-many-return-statements
+    "PLW1514", # unspecified-encoding
+    "PLR2004", # magic-value-comparison (common in ML: dim == 0, size == 1, etc.)
+    "SIM108",  # ternary-operator (hurts readability in complex tensor expressions)
+]
+
+[tool.ruff.lint.pylint]
+max-branches = 12
+max-locals = 15
+max-statements = 50
+max-bool-expr = 5
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["F811"]
 
 [tool.setuptools]
 packages = ["transformer"]

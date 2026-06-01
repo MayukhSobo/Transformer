@@ -1,7 +1,8 @@
 import logging
-import sentencepiece as spm
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
+import sentencepiece as spm
 from codetiming import Timer
 from datasets.arrow_dataset import Dataset
 

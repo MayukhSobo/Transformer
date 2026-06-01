@@ -3,13 +3,14 @@ This module can be used for running various operations related to the transforme
 For testing the model, please use the test suite in the tests/ directory.
 """
 
-from model import build_transformer
-from config import Config
-from pathlib import Path
 import logging
-from utils import get_dataloader
-from train import train_epoch_avg_CE
+from pathlib import Path
+
+from config import Config
 from loss import get_loss_function
+from model import build_transformer
+from train import train_epoch_avg_CE
+from utils import get_dataloader
 from wnb import ExperimentTracker
 
 logger = logging.getLogger(__name__)

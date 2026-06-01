@@ -1,11 +1,13 @@
 import logging
+from collections.abc import Callable, Iterator
+
 import torch
-import torch.nn as nn
-from config import Config
+from torch import nn
+
+from arch.decoder.layer import DecoderLayer
 from arch.embedding import Embeddings
 from arch.positional_encoding import PositionalEncoding
-from arch.decoder.layer import DecoderLayer
-from typing import Callable, Iterator
+from config import Config
 
 logger = logging.getLogger(__name__)
 

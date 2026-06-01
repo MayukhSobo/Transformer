@@ -1,7 +1,8 @@
-import torch
-import torch.nn as nn
 import math
-from typing import Callable
+from collections.abc import Callable
+
+import torch
+from torch import nn
 
 
 class SelfAttention(nn.Module):

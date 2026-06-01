@@ -5,25 +5,24 @@ This module contains tests for verifying the correctness and functionality
 of the transformer model implementation with beautiful output and comprehensive reporting.
 """
 
-import sys
-import os
-import time
 import logging
+import os
+import sys
+import time
 from pathlib import Path
 
 import pytest
 import torch
-
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
-from model import build_transformer
 from config import Config
-from utils import get_dataloader, BatchTensors
-from train import train_batch_CE
 from loss import get_loss_function
+from model import build_transformer
+from train import train_batch_CE
+from utils import BatchTensors, get_dataloader
 
 # Add the parent directory to the path to import modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -229,7 +228,7 @@ def standalone_test_run(config_file: Path):
         )
 
     except Exception as e:  # pylint: disable=broad-except
-        console.print(Panel(f"Error: {str(e)}", title="💥 Test Failed", style="red"))
+        console.print(Panel(f"Error: {e!s}", title="💥 Test Failed", style="red"))
         raise
 
 

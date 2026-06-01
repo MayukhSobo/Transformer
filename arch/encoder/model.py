@@ -1,10 +1,12 @@
+from collections.abc import Callable, Iterator
+
 import torch
-import torch.nn as nn
-from config import Config
-from arch.encoder.layer import EncoderLayer
-from typing import Iterator, Callable
+from torch import nn
+
 from arch.embedding import Embeddings
+from arch.encoder.layer import EncoderLayer
 from arch.positional_encoding import PositionalEncoding
+from config import Config
 
 
 class Encoder(nn.Module):

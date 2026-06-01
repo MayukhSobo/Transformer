@@ -1,9 +1,10 @@
-from .sentencepiece import SentencePieceTokenizer
-from .word import WordTokenizer
 from pathlib import Path
 
+from .sentencepiece import SentencePieceTokenizer
+from .word import WordTokenizer
 
-def get_tokenizer(
+
+def create_tokenizer(
     tokenizer_kind: str,
     model_path: Path,
     vocab_size: int,

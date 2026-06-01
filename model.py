@@ -1,20 +1,20 @@
-from pathlib import Path
-from typing import Union
-import torch
-from config import Config
-from dataset import TransformerDataset, get_dataset
-import logging
-from tokenizer.tokenizer import get_tokenizer
-from arch.encoder.model import get_encoder, Encoder
-from arch.decoder.model import get_decoder, Decoder
-from arch.classifier import get_classifier, Classifier
-from dataclasses import dataclass
-from shutil import rmtree
-import humanize
-from utils import get_device
-from dataset import Dataset
-import psutil
 import gc
+import logging
+from dataclasses import dataclass
+from pathlib import Path
+from shutil import rmtree
+
+import humanize
+import psutil
+import torch
+
+from arch.classifier import Classifier, get_classifier
+from arch.decoder.model import Decoder, get_decoder
+from arch.encoder.model import Encoder, get_encoder
+from config import Config
+from dataset import Dataset, TransformerDataset, get_dataset
+from tokenizer import create_tokenizer
+from utils import get_device
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class TransformerModel:
         self.device = device
         return self
 
-    def get_layer(self, layer_chain: str) -> Union[torch.nn.Module, None]:
+    def get_layer(self, layer_chain: str) -> torch.nn.Module | None:
         parent = self
         for layer in layer_chain.split("."):
             model = getattr(parent, layer, None)
@@ -106,7 +106,7 @@ class TransformerModel:
         # Initialize weights for decoder
         self.decoder._init_layers(initializer, init_bias)
 
-        logger.debug(f"📝 Initialized embedding layers")
+        logger.debug("📝 Initialized embedding layers")
 
 
 def init_dataset(tokenizer, config: Config):
@@ -166,15 +166,15 @@ def init_tokenizer(config: Config):
         base_path/sample_size-algorithm-vocab_size/tokenizer.model
         This allows multiple configurations to coexist without conflicts.
     """
-    kind = config.tokenizer.kind
-    vocab_size = config.model.vocab_size
-    base_path = Path(config.tokenizer.model)
+    kind: str = config.tokenizer.kind
+    vocab_size: int = config.model.vocab_size
+    base_path: Path = Path(config.tokenizer.model)
 
     # Create a configuration-specific path to avoid conflicts when parameters change
-    config_dir = (
+    config_dir: str = (
         f"{config.tokenizer.sample_size}-{config.tokenizer.algorithm}-{vocab_size}"
     )
-    tk_model_path = base_path / config_dir / "tokenizer"
+    tk_model_path: Path = base_path / config_dir / "tokenizer"
 
     logger.info(f"Using tokenizer path: {tk_model_path}")
 
@@ -183,7 +183,7 @@ def init_tokenizer(config: Config):
         rmtree(tk_model_path.parent, ignore_errors=True)
         logger.info(f"Removed existing tokenizer at {tk_model_path.parent}")
 
-    return get_tokenizer(
+    return create_tokenizer(
         tokenizer_kind=kind,
         model_path=tk_model_path,
         vocab_size=vocab_size,

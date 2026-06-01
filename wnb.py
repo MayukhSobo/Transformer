@@ -1,7 +1,8 @@
-import wandb
 import os
 from datetime import datetime
 from pathlib import Path
+
+import wandb
 
 
 class ExperimentTracker:

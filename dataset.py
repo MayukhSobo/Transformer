@@ -1,7 +1,9 @@
 import logging
+import os
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Iterator, Tuple
+from typing import Any
 
 import torch
 from codetiming import Timer
@@ -15,9 +17,9 @@ from tokenizer.word import WordTokenizer
 logger = logging.getLogger(__name__)
 
 
-@Timer(name="load_data", text="Loading data took {:.2f} seconds")
+@Timer(name="load_data", text="Took {:.2f} seconds")
 def get_dataset(
-    data_path: Path, validation: object = True, streaming: bool = True
+    data_path: Path, validation: bool = True, streaming: bool = True
 ) -> tuple:
     """
     Load the WMT14 German-English dataset with optional streaming for memory efficiency.
@@ -29,7 +31,7 @@ def get_dataset(
     Args:
         data_path (Path): Path to the cache directory for dataset storage. If the
             dataset exists in cache, it will be loaded from there.
-        validation (object): Whether to include the validation dataset in the
+        validation (bool): Whether to include the validation dataset in the
             returned tuple. Defaults to True.
         streaming (bool): Whether to use streaming mode to avoid loading the entire
             dataset into memory. Defaults to True for memory efficiency.
@@ -42,6 +44,9 @@ def get_dataset(
         Streaming mode is recommended for large datasets to prevent memory issues.
         The function uses HuggingFace's datasets library with caching for efficiency.
     """
+    if (data_path / "wmt___wmt14").exists():
+        os.environ["HF_HUB_OFFLINE"] = "1"
+
     dataset = load_dataset(
         "wmt/wmt14",
         "de-en",
@@ -92,7 +97,7 @@ class TransformerDataset(IterableDataset):  # pylint: disable=abstract-method
         lang_keys = list(first_sample["translation"].keys())
         self.tokenizer.train(dataset, lang_keys)
 
-    def __iter__(self) -> Iterator[Tuple[torch.Tensor, torch.Tensor]]:
+    def __iter__(self) -> Iterator[tuple[torch.Tensor, torch.Tensor]]:
         for sample in self.dataset:
             src_text = sample["translation"]["en"]
             tgt_text = sample["translation"]["de"]

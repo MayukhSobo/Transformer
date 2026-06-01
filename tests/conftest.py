@@ -4,9 +4,10 @@ Pytest configuration and fixtures.
 This file contains global pytest configuration and shared fixtures.
 """
 
-import torch
-import pytest
 import logging
+
+import pytest
+import torch
 from rich.console import Console
 
 # Initialize console for rich output

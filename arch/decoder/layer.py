@@ -1,11 +1,13 @@
+from collections.abc import Callable
+
 import torch
-import torch.nn as nn
-from typing import Callable, Union
-from arch.attentions.multihead import MultiHeadAttention
+from torch import nn
+
 from arch.attentions.cross import CrossAttention
-from arch.residual_add_norm import ResidualAddNorm
-from arch.feed_forward import FeedForward
+from arch.attentions.multihead import MultiHeadAttention
 from arch.attentions.self import SelfAttention
+from arch.feed_forward import FeedForward
+from arch.residual_add_norm import ResidualAddNorm
 
 
 class DecoderLayer(nn.Module):
@@ -26,7 +28,7 @@ class DecoderLayer(nn.Module):
         dropout_pe: float,
         n_heads: int,
         ff_hidden_size: int,
-        d_k: Union[int, None] = None,
+        d_k: int | None = None,
     ):
         """
         Initializes a decoder layer with masked self-attention, cross-attention, and feed-forward components.

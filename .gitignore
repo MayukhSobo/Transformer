@@ -16,3 +16,11 @@ data/*
 *.html
 wandb/
 .ipynb_checkpoints/
+.conda/
+.idea/
+.ruff_cache/
+.claude/
+
+reports/**
+!reports/.gitkeep
+

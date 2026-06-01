@@ -1,5 +1,6 @@
-import re
 import logging
+import re
+
 from datasets.arrow_dataset import Dataset
 from tqdm import tqdm
 

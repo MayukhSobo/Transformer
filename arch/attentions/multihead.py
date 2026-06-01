@@ -1,8 +1,10 @@
+from collections.abc import Callable
+
 import torch
-import torch.nn as nn
-from arch.attentions.self import SelfAttention
+from torch import nn
+
 from arch.attentions.cross import CrossAttention
-from typing import Union, Type, List, Callable
+from arch.attentions.self import SelfAttention
 
 
 class MultiHeadAttention(nn.Module):
@@ -16,13 +18,13 @@ class MultiHeadAttention(nn.Module):
 
     def __init__(
         self,
-        attention_type: Type[Union[SelfAttention, CrossAttention]],
+        attention_type: type[SelfAttention | CrossAttention],
         n_heads: int,
         hidden_size: int,
         max_seq_len: int,
         dropout_pe: float,
         masking: bool,
-        d_k: Union[int, None] = None,
+        d_k: int | None = None,
     ):
         """
         Initializes the multi-head attention mechanism with specified parameters.
@@ -57,7 +59,7 @@ class MultiHeadAttention(nn.Module):
         self.d_k = d_k
         self.IsSelfAttention = attention_type is SelfAttention
         # Create `n_heads` number of self-attention heads
-        self.attention_heads: List[SelfAttention | CrossAttention] = nn.ModuleList(
+        self.attention_heads: list[SelfAttention | CrossAttention] = nn.ModuleList(
             [
                 attention_type(
                     hidden_size=hidden_size,
@@ -78,7 +80,7 @@ class MultiHeadAttention(nn.Module):
         self,
         x: torch.Tensor,
         pad_mask: torch.Tensor,
-        encoder_output: Union[torch.Tensor, None] = None,
+        encoder_output: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """
         Performs forward pass of the multi-head attention mechanism.

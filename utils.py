@@ -1,9 +1,11 @@
-import torch
-from torch.utils.data import DataLoader
 import logging
 from collections import namedtuple
-from dataset import Dataset
+
+import torch
+from torch.utils.data import DataLoader
+
 from config import Config
+from dataset import Dataset
 
 # Define BatchTensors here to avoid circular imports
 BatchTensors = namedtuple(
@@ -137,12 +139,7 @@ def get_device(config: Config) -> torch.device:
     Raises:
         ValueError: If an invalid device value is specified in the configuration.
     """
-    preference = getattr(config.training, "device", "auto").lower()
-
-    if preference not in ("auto", "cuda", "cpu"):
-        raise ValueError(
-            f"Invalid device: '{preference}'. Must be 'auto', 'cuda', or 'cpu'"
-        )
+    preference = config.training.device.lower()
 
     if preference == "cuda" and not torch.cuda.is_available():
         logger.warning("CUDA requested but not available, falling back to CPU")

@@ -18,9 +18,10 @@ In the above 2 sentences, attention for kills will be the same in arch,
 but they mean entirely opposite just because of positioning.
 """
 
-import torch
-import torch.nn as nn
 import math
+
+import torch
+from torch import nn
 
 
 class PositionalEncoding(nn.Module):

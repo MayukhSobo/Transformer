@@ -1,6 +1,7 @@
+from collections.abc import Callable
+
 import torch
-import torch.nn as nn
-from typing import Callable
+from torch import nn
 
 
 class FeedForward(nn.Module):

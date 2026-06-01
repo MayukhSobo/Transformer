@@ -5,11 +5,11 @@ Test runner script for the transformer project.
 This script provides an easy way to run the transformer tests with enhanced output.
 """
 
-import sys
 import subprocess
+import sys
 import time
-from pathlib import Path
 import traceback
+from pathlib import Path
 
 
 def print_banner(title, char="=", width=80):

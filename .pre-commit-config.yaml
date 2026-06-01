@@ -4,3 +4,10 @@ repos:
     hooks:
       - id: black
         language_version: python3.13
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.15
+    hooks:
+      - id: ruff
+        stages: [pre-commit, pre-push]
+        args: [--exit-non-zero-on-fix]

@@ -15,8 +15,14 @@
 
     "terminal.integrated.profiles.osx": {
         "fish": {
-            "path": "/opt/homebrew/bin/fish"
+            "path": "/opt/homebrew/bin/fish",
+            "args": ["-C", "type -q conda; and conda deactivate"]
         }
     },
-    "terminal.integrated.defaultProfile.osx": "fish"
+    "terminal.integrated.defaultProfile.osx": "fish",
+
+    "terminal.integrated.env.osx": {
+        "VIRTUAL_ENV": "${workspaceFolder}/.venv",
+        "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
+    }
 }

@@ -1,29 +1,175 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-exit_code=0
+# shellcheck source=ensure-gum
+source "$(dirname "${BASH_SOURCE[0]}")/ensure-gum"
+
+silent=false
+for arg in "$@"; do
+    case "$arg" in
+        --raw) silent=true ;;
+        *) printf 'Unknown option: %s\nUsage: %s [--raw]\n' "$arg" "$0" >&2; exit 1 ;;
+    esac
+done
+
+if $silent; then
+    export NO_COLOR=1
+fi
+
+declare -a check_names=()
+declare -a check_statuses=()
+declare -a check_outputs=()  # only populated in interactive mode
+
+case "$(uname -s)" in
+    Darwin) LOG_DIR="$HOME/Library/Logs/Transformer" ;;
+    *)      LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/Transformer" ;;
+esac
+LOG_FILE="${LOG_DIR}/sanity-check-$(date +%Y%m%d-%H%M%S).log"
 
 run_check() {
     local name="$1"
     shift
-    echo "[$name]"
-    "$@"
-    local code=$?
-    if [ $code -ne 0 ]; then
-        echo "FAILED: $name"
-        exit_code=1
+    local code
+
+    if $silent; then
+        printf '\n[%s]\n' "$name"
+        "$@"
+        code=$?
+    else
+        local tmpfile
+        tmpfile=$(mktemp)
+        export _GUM_TMPFILE="$tmpfile"
+        gum spin \
+            --spinner dot \
+            --spinner.foreground 99 \
+            --title "Running ${name}..." \
+            --title.foreground 245 \
+            -- bash -c '"$@" >"$_GUM_TMPFILE" 2>&1' _ "$@"
+        code=$?
+        unset _GUM_TMPFILE
+        check_outputs+=("$(cat "$tmpfile")")
+        rm -f "$tmpfile"
     fi
-    echo ""
+
+    check_names+=("$name")
+    check_statuses+=("$([ $code -eq 0 ] && echo PASS || echo FAIL)")
 }
 
-run_check "ruff lint"   uv run ruff check .
-run_check "ruff format" uv run ruff format --check .
-run_check "ty"          uv run ty check --python .venv .
+# ── interactive header ────────────────────────────────────────────────────────
+if ! $silent; then
+    gum style \
+        --border rounded \
+        --border-foreground 99 \
+        --padding "0 2" \
+        --margin "1 0" \
+        "Transformer — Sanity Check"
+fi
 
-if [ $exit_code -ne 0 ]; then
-    echo "One or more checks failed."
+# ── run checks ────────────────────────────────────────────────────────────────
+run_check "lint"       uv run ruff check .
+run_check "format"     bash -c '
+    output=$(uv run ruff format . 2>&1); code=$?
+    if   [ $code -ne 0 ];                              then printf "Formatting failed\n%s\n" "$output"
+    elif printf "%s" "$output" | grep -q "reformatted"; then printf "%s\n" "$output" | sed "s/reformatted/formatted/g"
+    else printf "Nothing to format\n"
+    fi
+    exit $code
+'
+run_check "type check" uv run ty check --python .venv --exclude notebooks/ .
+
+# ── results ───────────────────────────────────────────────────────────────────
+exit_code=0
+has_failures=false
+for status in "${check_statuses[@]}"; do
+    [ "$status" = "FAIL" ] && exit_code=1 && has_failures=true
+done
+
+if $silent; then
+    # Plain text summary — no table, no log
+    printf '\n'
+    for i in "${!check_names[@]}"; do
+        if [ "${check_statuses[$i]}" = "PASS" ]; then
+            printf '  %-12s PASS\n' "${check_names[$i]}"
+        else
+            printf '  %-12s FAIL\n' "${check_names[$i]}"
+        fi
+    done
+    printf '\n'
+    if $has_failures; then
+        printf 'One or more checks failed.\n'
+    else
+        printf 'All checks passed.\n'
+    fi
 else
-    echo "All checks passed."
+    # Fancy table
+    echo ""
+
+    col1_w=5
+    for name in "${check_names[@]}"; do
+        (( ${#name} > col1_w )) && col1_w=${#name}
+    done
+    col2_w=6  # "✓ PASS" / "✗ FAIL"
+
+    B=$'\033[38;5;99m'
+    G=$'\033[32m'
+    R=$'\033[31m'
+    X=$'\033[0m'
+
+    _hline() {
+        printf '%s%s' "$B" "$1"
+        printf '─%.0s' $(seq 1 $((col1_w + 2)))
+        printf '%s' "$2"
+        printf '─%.0s' $(seq 1 $((col2_w + 2)))
+        printf '%s%s\n' "$3" "$X"
+    }
+
+    _hline '╭' '┬' '╮'
+    printf '%s│%s %-*s %s│%s %-*s %s│%s\n' \
+        "$B" "$X" $col1_w "Check" "$B" "$X" $col2_w "Status" "$B" "$X"
+    _hline '├' '┼' '┤'
+    for i in "${!check_names[@]}"; do
+        if [ "${check_statuses[$i]}" = "PASS" ]; then
+            colored_status="${G}✓ PASS${X}"
+        else
+            colored_status="${R}✗ FAIL${X}"
+        fi
+        printf '%s│%s %-*s %s│%s %s %s│%s\n' \
+            "$B" "$X" $col1_w "${check_names[$i]}" "$B" "$X" "$colored_status" "$B" "$X"
+    done
+    _hline '╰' '┴' '╯'
+
+    echo ""
+
+    if $has_failures; then
+        mkdir -p "$LOG_DIR"
+        {
+            printf 'Transformer Sanity Check — %s\n' "$(date)"
+            printf '=%.0s' {1..50}; echo ""
+            echo ""
+            for i in "${!check_names[@]}"; do
+                [ "${check_statuses[$i]}" = "PASS" ] && continue
+                printf '── %s ' "${check_names[$i]}"
+                printf -- '-%.0s' $(seq 1 $((40 - ${#check_names[$i]})))
+                echo ""
+                echo "${check_outputs[$i]:-"(no output captured)"}"
+                echo ""
+            done
+        } > "$LOG_FILE"
+
+        gum style --foreground 245 "  Log saved: ${LOG_FILE}"
+        echo ""
+
+        if gum confirm --affirmative "View" --negative "Skip" "Open failure log?"; then
+            gum pager < "$LOG_FILE"
+        fi
+
+        echo ""
+        gum style --foreground 196 --bold "One or more checks failed."
+    else
+        gum style --foreground 82 --bold "✓ All checks passed."
+    fi
+
+    echo ""
 fi
 
 exit $exit_code

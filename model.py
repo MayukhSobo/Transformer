@@ -1,6 +1,7 @@
 import gc
 import logging
 from dataclasses import dataclass
+from itertools import chain
 from pathlib import Path
 from shutil import rmtree
 
@@ -96,6 +97,22 @@ class TransformerModel:
             f"Unknown init method {init_method}, defaulting to xavier_uniform"
         )
         return torch.nn.init.xavier_uniform_
+
+    def parameters(self) -> chain:
+        return chain(
+            self.encoder.parameters(),
+            self.decoder.parameters(),
+            self.classifier.parameters(),
+        )
+
+    def named_parameters(self):
+        for prefix, module in [
+            ("encoder", self.encoder),
+            ("decoder", self.decoder),
+            ("classifier", self.classifier),
+        ]:
+            for name, param in module.named_parameters():
+                yield f"{prefix}.{name}", param
 
     def initialize_weights_(self, init_method: str, init_bias: bool):
         initializer = TransformerModel._eval_initializer(init_method)

@@ -59,7 +59,7 @@ class SelfAttention(nn.Module):
         self.register_buffer("causal_mask", causal_mask, persistent=True)
 
     def forward(
-        self, x: torch.Tensor, padding_mask: torch.Tensor = None
+        self, x: torch.Tensor, padding_mask: torch.Tensor | None = None
     ) -> torch.Tensor:
         """
         Performs forward pass of the self-attention mechanism.
@@ -101,7 +101,7 @@ class SelfAttention(nn.Module):
         # Apply masking
         if self.masking:
             _, SeqLen, _ = scores.shape
-            mask: torch.Tensor = self.causal_mask[:SeqLen, :SeqLen]
+            mask: torch.Tensor = self.causal_mask[:SeqLen, :SeqLen]  # type: ignore
             scores = scores.masked_fill(mask, neg_inf)
 
         # Apply Softmax

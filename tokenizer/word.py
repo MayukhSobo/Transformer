@@ -34,7 +34,7 @@ class WordTokenizer:
     def encode(
         self, src_txt: str, tgt_txt: str
     ) -> tuple[list[int], list[int]] | tuple[None, None]:
-        pass
+        return (None, None)
         # self.build_vocab(text)
         # if len(self.word_to_id) < 2 or len(self.id_to_word) < 2:
         #     logger.error("Please build the vocab first")

@@ -1,5 +1,5 @@
 import logging
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 
 import torch
 from torch import nn
@@ -38,14 +38,14 @@ class Decoder(nn.Module):
         n_layers: int,
         n_heads: int,
         ff_size: int,
-        d_k: int,
+        d_k: int | None,
     ):
         super().__init__()
         self.embeddings = Embeddings(vocab_size=vocab_size, hidden_size=hidden_size)
         self.target_position_encoding = PositionalEncoding(
             seq_len, hidden_size, dropout_pe
         )
-        self.decoder_layers: Iterator[DecoderLayer] = nn.ModuleList(
+        self.decoder_layers: nn.ModuleList = nn.ModuleList(
             [
                 DecoderLayer(
                     hidden_size=hidden_size,
@@ -74,7 +74,7 @@ class Decoder(nn.Module):
 
         for decoder_layer in self.decoder_layers:
             if hasattr(decoder_layer, "_init_layer"):
-                decoder_layer._init_layer(intializer, init_bias)
+                decoder_layer._init_layer(intializer, init_bias)  # type: ignore
 
 
 def get_decoder(conf: Config) -> Decoder:
@@ -94,7 +94,7 @@ def get_decoder(conf: Config) -> Decoder:
     vocab_size: int = conf.model.vocab_size
     dropout_pe: float = conf.model.dropout_pe
     n_heads: int = conf.model.n_heads
-    d_k: int = conf.model.get("d_k", None)
+    d_k: int | None = getattr(conf.model, "d_k", None)
     ff_hidden_size: int = conf.model.ff_hidden_size
     n_layers: int = conf.model.n_layers
     return Decoder(

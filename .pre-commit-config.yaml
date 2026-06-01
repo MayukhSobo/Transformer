@@ -12,24 +12,17 @@ repos:
 
   - repo: local
     hooks:
-      - id: ruff-check-all
-        name: ruff check (all files)
+      - id: sanity-check
+        name: sanity check
         stages: [pre-push]
         language: system
-        entry: ruff check .
-        pass_filenames: false
-        always_run: true
-      - id: ruff-format-check-all
-        name: ruff format --check (all files)
-        stages: [pre-push]
-        language: system
-        entry: ruff format --check .
+        entry: ./scripts/run-sanity-check --raw
         pass_filenames: false
         always_run: true
       - id: ty
         name: ty (type check)
-        stages: [pre-commit, pre-push]
+        stages: [pre-commit]
         language: system
-        entry: ty check --python .venv .
+        entry: uv run ty check --python .venv --exclude notebooks/ .
         pass_filenames: false
         always_run: true

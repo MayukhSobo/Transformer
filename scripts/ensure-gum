@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Source this file — do not execute directly.
+# Ensures gum is available on PATH, installing it if necessary.
+
+if command -v gum &>/dev/null; then return 0; fi
+
+local os arch version bin_dir="$HOME/.local/bin"
+
+case "$(uname -s)" in
+    Darwin) os="Darwin" ;;
+    Linux)  os="Linux"  ;;
+    *) echo "Unsupported OS: $(uname -s)" >&2; return 1 ;;
+esac
+
+case "$(uname -m)" in
+    x86_64)          arch="x86_64" ;;
+    aarch64 | arm64) arch="arm64"  ;;
+    *) echo "Unsupported architecture: $(uname -m)" >&2; return 1 ;;
+esac
+
+version=$(curl -fsSL https://api.github.com/repos/charmbracelet/gum/releases/latest \
+    | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
+
+echo "Installing gum v${version} → ${bin_dir}..."
+mkdir -p "$bin_dir"
+curl -fsSL "https://github.com/charmbracelet/gum/releases/download/v${version}/gum_${version}_${os}_${arch}.tar.gz" \
+    | tar -xz -C "$bin_dir" gum
+
+export PATH="$bin_dir:$PATH"

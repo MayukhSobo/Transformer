@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 
 import torch
 from torch import nn
@@ -35,7 +35,7 @@ class Encoder(nn.Module):
         n_layers: int,
         n_heads: int,
         ff_size: int,
-        d_k: int,
+        d_k: int | None,
     ):
         """
         Initialize the Transformer encoder with specified architecture parameters.
@@ -55,7 +55,7 @@ class Encoder(nn.Module):
         super().__init__()
         self.embeddings = Embeddings(vocab_size, hidden_size)
         self.positional_encoder = PositionalEncoding(seq_len, hidden_size, dropout_pe)
-        self.encoder_layers: Iterator[EncoderLayer] = nn.ModuleList(
+        self.encoder_layers: nn.ModuleList = nn.ModuleList(
             [
                 EncoderLayer(
                     hidden_size=hidden_size,
@@ -93,7 +93,7 @@ class Encoder(nn.Module):
 
         for encoder_layer in self.encoder_layers:
             if hasattr(encoder_layer, "_init_layer"):
-                encoder_layer._init_layer(initializer, init_bias)
+                encoder_layer._init_layer(initializer, init_bias)  # type: ignore
 
 
 def get_encoder(conf: Config) -> Encoder:
@@ -123,7 +123,7 @@ def get_encoder(conf: Config) -> Encoder:
     vocab_size: int = conf.model.vocab_size
     dropout_pe: float = conf.model.dropout_pe
     n_heads: int = conf.model.n_heads
-    d_k: int = conf.model.get("d_k", None)
+    d_k: int | None = getattr(conf.model, "d_k", None)
     ff_hidden_size: int = conf.model.ff_hidden_size
     n_layers: int = conf.model.n_layers
 

@@ -3,24 +3,11 @@ name: Code Quality
 on: [push, pull_request]
 
 jobs:
-  lint-and-format:
-    name: Lint & Format (ruff)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/ruff-action@v3
-        with:
-          args: "check ."
-      - uses: astral-sh/ruff-action@v3
-        with:
-          args: "format --check ."
-
-  type-check:
-    name: Type Check (ty)
+  sanity-check:
+    name: Sanity Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - run: uv sync
-      - run: uv tool install ty
-      - run: ty check --python .venv .
+      - run: uv sync --all-extras
+      - run: ./scripts/run-sanity-check --raw

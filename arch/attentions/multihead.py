@@ -59,7 +59,7 @@ class MultiHeadAttention(nn.Module):
         self.d_k = d_k
         self.IsSelfAttention = attention_type is SelfAttention
         # Create `n_heads` number of self-attention heads
-        self.attention_heads: list[SelfAttention | CrossAttention] = nn.ModuleList(
+        self.attention_heads: nn.ModuleList = nn.ModuleList(
             [
                 attention_type(
                     hidden_size=hidden_size,
@@ -127,7 +127,7 @@ class MultiHeadAttention(nn.Module):
     def _init_layer(self, initializer: Callable, init_bias: bool):
         for i, head in enumerate(self.attention_heads):
             if hasattr(head, "_init_layer"):
-                head._init_layer(initializer, init_bias)
+                head._init_layer(initializer, init_bias)  # type: ignore
             else:
                 raise NotImplementedError(f"Head {i} does not have _init_layer method")
 

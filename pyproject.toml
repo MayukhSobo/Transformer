@@ -21,7 +21,7 @@ dev = [
     "ipython>=9.4.0",
     "jupyter",
     "ruff>=0.15.0",
-    "ty>=0.0.41",
+    "ty==0.0.42",
 ]
 test = [
     "pytest>=7.0.0",
@@ -35,6 +35,10 @@ test = [
     "rich>=13.0.0",
     "colorama>=0.4.6",
 ]
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+rules = { too-many-positional-arguments = "ignore" }
 
 [tool.ruff]
 line-length = 88

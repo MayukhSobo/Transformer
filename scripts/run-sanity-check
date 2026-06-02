@@ -9,6 +9,9 @@ for arg in "$@"; do
     esac
 done
 
+# shellcheck source=ensure-uv
+source "$(dirname "${BASH_SOURCE[0]}")/ensure-uv"
+
 if $silent; then
     export NO_COLOR=1
 else
@@ -66,16 +69,16 @@ if ! $silent; then
 fi
 
 # ── run checks ────────────────────────────────────────────────────────────────
-run_check "lint"       uv run ruff check .
+run_check "lint"       "$UV" run ruff check .
 run_check "format"     bash -c '
-    output=$(uv run ruff format . 2>&1); code=$?
+    output=$("$UV" run ruff format . 2>&1); code=$?
     if   [ $code -ne 0 ];                              then printf "Formatting failed\n%s\n" "$output"
     elif printf "%s" "$output" | grep -q "reformatted"; then printf "%s\n" "$output" | sed "s/reformatted/formatted/g"
     else printf "Nothing to format\n"
     fi
     exit $code
 '
-run_check "type check" uv run ty check --python .venv --exclude notebooks/ --error-on-warning .
+run_check "type check" "$UV" run ty check --python .venv --exclude notebooks/ --error-on-warning .
 
 # ── results ───────────────────────────────────────────────────────────────────
 exit_code=0

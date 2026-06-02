@@ -23,6 +23,6 @@ repos:
         name: ty (type check)
         stages: [pre-commit]
         language: system
-        entry: uv run ty check --python .venv --exclude notebooks/ --error-on-warning .
+        entry: ./scripts/uv run ty check --python .venv --exclude notebooks/ --error-on-warning .
         pass_filenames: false
         always_run: true

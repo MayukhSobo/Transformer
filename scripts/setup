@@ -24,30 +24,26 @@ done
 # shellcheck source=ensure-gum
 source "$(dirname "${BASH_SOURCE[0]}")/ensure-gum"
 
-# ── check uv ─────────────────────────────────────────────────────────────────
+# ── ensure uv ────────────────────────────────────────────────────────────────
 
-if ! command -v uv &>/dev/null; then
-    gum style \
-        --foreground 196 --bold \
-        "uv not found. Install it from https://docs.astral.sh/uv/getting-started/installation/"
-    exit 1
-fi
+# shellcheck source=ensure-uv
+source "$(dirname "${BASH_SOURCE[0]}")/ensure-uv"
 
 # ── header ────────────────────────────────────────────────────────────────────
 
-gum style \
+"$GUM" style \
     --border rounded \
     --border-foreground 99 \
     --padding "1 4" \
     --margin "1 0" \
-    "$(gum style --foreground 99 --bold 'Transformer') — Project Setup"
+    "$("$GUM" style --foreground 99 --bold 'Transformer') — Project Setup"
 
 # ── mode selection ────────────────────────────────────────────────────────────
 
 if [ $# -eq 1 ]; then
     CHOICE="$1"
 else
-    CHOICE=$(gum choose \
+    CHOICE=$("$GUM" choose \
         --header "Select setup mode:" \
         --header.foreground 245 \
         --cursor.foreground 99 \
@@ -69,20 +65,17 @@ echo ""
 
 # ── install ───────────────────────────────────────────────────────────────────
 
-gum spin --spinner dot --title "Installing dependencies..." -- \
-    uv sync "${SYNC_ARGS[@]}"
-gum style --foreground 82 "✓ Dependencies installed"
+"$UV" sync "${SYNC_ARGS[@]}"
+"$GUM" style --foreground 82 "✓ Dependencies installed"
 
 if [ "$INSTALL_HOOKS" = true ]; then
-    gum spin --spinner dot --title "Installing git hooks..." -- \
-        uv run pre-commit install --install-hooks
-    gum spin --spinner dot --title "Installing pre-push hook..." -- \
-        uv run pre-commit install --hook-type pre-push
-    gum style --foreground 82 "✓ Git hooks installed"
+    "$UV" tool run pre-commit install --install-hooks
+    "$UV" tool run pre-commit install --hook-type pre-push
+    "$GUM" style --foreground 82 "✓ Git hooks installed"
 fi
 
 echo ""
-gum style \
+"$GUM" style \
     --foreground 82 --bold \
     "Done. Run scripts/run-sanity-check to verify."
 echo ""

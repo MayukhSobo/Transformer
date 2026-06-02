@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Source this file — do not execute directly.
+# Ensures uv is available in the scripts directory, exposing it as $UV.
+
+_scripts_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export UV="$_scripts_dir/uv"
+
+if [ -x "$UV" ]; then return 0; fi
+
+os="" arch=""
+
+case "$(uname -s)" in
+    Darwin) os="apple-darwin" ;;
+    Linux)  os="unknown-linux-gnu" ;;
+    *) echo "Unsupported OS: $(uname -s)" >&2; return 1 ;;
+esac
+
+case "$(uname -m)" in
+    x86_64)          arch="x86_64" ;;
+    aarch64 | arm64) arch="aarch64" ;;
+    *) echo "Unsupported architecture: $(uname -m)" >&2; return 1 ;;
+esac
+
+version=$(curl -fsSL https://api.github.com/repos/astral-sh/uv/releases/latest \
+    | grep '"tag_name"' | sed -E 's/.*"v?([^"]+)".*/\1/')
+
+echo "Installing uv v${version} → ${_scripts_dir}..."
+_tmpdir=$(mktemp -d)
+curl -fsSL "https://github.com/astral-sh/uv/releases/download/${version}/uv-${arch}-${os}.tar.gz" \
+    | tar -xz -C "$_tmpdir"
+find "$_tmpdir" -name "uv" -type f -exec mv {} "$UV" \;
+chmod +x "$UV"
+rm -rf "$_tmpdir"
